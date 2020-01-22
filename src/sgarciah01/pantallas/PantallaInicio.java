@@ -65,7 +65,7 @@ public class PantallaInicio implements Pantalla {
 	 */
 	@Override
 	public void pulsarRaton(MouseEvent e) {
-		//this.panelJuego.setPantallaActual(new PantallaInicioNivel(panelJuego, 1));
+		this.panelJuego.setPantallaActual(new PantallaJuego(panelJuego));
 	}
 
 	/**

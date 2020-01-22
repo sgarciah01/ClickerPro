@@ -55,7 +55,7 @@ public class VentanaPrincipal {
 	
 	public VentanaPrincipal() {
 		ventana = new JFrame();
-		ventana.setBounds(100, 50, 1500, 800);
+		ventana.setBounds(400, 200, 1000, 600);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
