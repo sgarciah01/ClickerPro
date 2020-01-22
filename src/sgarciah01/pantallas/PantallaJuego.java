@@ -21,6 +21,7 @@ public class PantallaJuego implements Pantalla {
 	/** FONDO **/
 	private BufferedImage fondo;
 	private Image fondoEscalado;
+	private Image fondoLateralEscalado;
 	private Image iconoAtaque;
 	private Image iconoDefensa;
 	private Image iconoVida;
@@ -55,6 +56,7 @@ public class PantallaJuego implements Pantalla {
 		// Imágenes
 		try {
 			fondo = ImageIO.read(new File("img/fondo1.png"));
+			fondoLateralEscalado = ImageIO.read(new File("img/fondo_lateral.jpg"));
 			iconoAtaque = ImageIO.read(new File("img/espada.png"));
 			iconoDefensa = ImageIO.read(new File("img/escudo.png"));
 			iconoVida = ImageIO.read(new File("img/corazon.png"));
@@ -78,6 +80,8 @@ public class PantallaJuego implements Pantalla {
 				iconoSpiderman1.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
 		iconoSpiderman2 = iconoSpiderman2.getScaledInstance(getAnchoEscalado(iconoSpiderman2.getWidth(null), 
 				iconoSpiderman2.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
+		fondoLateralEscalado = fondoLateralEscalado.getScaledInstance(250, 
+				panelJuego.getHeight() / OPCIONES, Image.SCALE_SMOOTH);
 		
 		iconoPersonaje = iconoSpiderman1;
 	}
@@ -95,10 +99,13 @@ public class PantallaJuego implements Pantalla {
 	
 	@Override
 	public void pintarPantalla(Graphics g) {
-		// ***** PANEL CENTRAL ***** //
+		// Fondo de los laterales
+		
+		
 		// Fondo
 		g.drawImage(fondoEscalado, 250, 0, null);
 		
+		// ***** PANEL CENTRAL ***** //		
 		// Iconos superiores
 		g.setColor(new Color(147, 158, 117, 200));
 		g.fillRect(250, 0, 500, 80);
@@ -114,29 +121,25 @@ public class PantallaJuego implements Pantalla {
 		
 		// Icono personaje
 		g.drawImage(iconoPersonaje, 460, 350, null);
+		
 
-		// Panel izquierdo
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, 250, panelJuego.getHeight());
-
-		g.setColor(Color.BLACK);
 		int altoCelda = panelJuego.getHeight() / OPCIONES;
 		int posYCelda;
-		for (int i = 0; i < OPCIONES; i++) {
+		
+		g.setColor(new Color(147, 158, 117, 200));
+		for (int i=0; i<OPCIONES; i++) {
 			posYCelda = i * altoCelda;
+			g.drawImage(fondoLateralEscalado, 0, posYCelda+i, null);
+			g.drawImage(fondoLateralEscalado, 750, posYCelda+i, null);
 			g.drawRect(0, posYCelda+i, 249, altoCelda);
-		}
-
-		// Panel derecho
-		g.setColor(Color.WHITE);
-		g.fillRect(750, 0, panelJuego.getWidth() - 750, panelJuego.getHeight());
-
-		g.setColor(Color.BLACK);
-		for (int i = 0; i < OPCIONES; i++) {
-			posYCelda = i * altoCelda;
 			g.drawRect(750, posYCelda+i, 249, altoCelda);
 		}
 
+		// Panel izquierdo
+		
+
+		// Panel derecho
+		
 	}
 	
 	/**
