@@ -177,6 +177,28 @@ public class Juego implements Runnable {
 		return 10 * (personaje.getVidaMaxima() / 2);
 	}
 
+	// *********************************************************************** //
+	// *************** 			MEJORAS DEL PERSONAJE 			************** //
+	// *********************************************************************** //
+	public void mejorarAtaquePersonaje () {
+		personaje.mejorarAtaque(precioMejoraAtaque);
+		nivelMejoraAtaque++;
+		precioMejoraAtaque = 10 * precioMejoraAtaque;
+	}
+	
+	public void mejorarDefensaPersonaje () {
+		personaje.mejorarDefensa(precioMejoraDefensa);
+		nivelMejoraDefensa++;
+		precioMejoraDefensa= 10 * precioMejoraDefensa;
+	}
+	
+	public void mejorarVidaMaximaPersonaje () {
+		personaje.mejorarVidaMaxima(precioMejoraVida);
+		nivelMejoraVida++;
+		precioMejoraVida= 10 * precioMejoraVida;
+	}
+	
+	
 	/**
 	 * Será el encargado de generar el dinero cada cierto tiempo
 	 */

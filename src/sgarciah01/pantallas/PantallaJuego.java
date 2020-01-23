@@ -265,13 +265,13 @@ public class PantallaJuego implements Pantalla {
 		if (posX <= 250) {	// Se ha pulsado en el panel de opciones de la izquierda
 			switch (opcion) {
 			case 1: 	// MEJORA ATAQUE
-				
+				juego.mejorarAtaquePersonaje();
 				break;
 			case 2: 	// MEJORA DEFENSA
-				
+				juego.mejorarDefensaPersonaje();
 				break;
 			case 3: 	// MEJORA VIDA MÁXIMA
-				
+				juego.mejorarVidaMaximaPersonaje();
 				break;
 			case 4: 	// POCIÓN
 				

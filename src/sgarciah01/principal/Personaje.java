@@ -95,27 +95,31 @@ public class Personaje {
 	/**
 	 * Mejora en 2 puntos el ataque del personaje.
 	 */
-	public void mejorarAtaque() {
+	public void mejorarAtaque(int precio) {
 		this.ataque += 2;
+		this.monedas -= precio;
 	}
 	
 	/**
 	 * Mejora en 2 puntos la defensa del personaje.
 	 */
-	public void mejorarDefensa() {
+	public void mejorarDefensa(int precio) {
 		this.defensa += 1;
+		this.monedas -= precio;
 	}
 	
 	/**
 	 * Mejora en 2 puntos la vida máxima y actual del personaje.
 	 */
-	public void mejorarVidaMaxima () {
+	public void mejorarVidaMaxima (int precio) {
 		this.vidaMaxima += 2;
 		this.vidaActual += 2;
+		this.monedas -= precio;
 	}
 	
-	public void mejorarIndiceCritico() {
+	public void mejorarIndiceCritico(int precio) {
 		this.indiceCritico++;
+		this.monedas -= precio;
 	}
 	
 	@Override
