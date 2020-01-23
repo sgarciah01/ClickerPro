@@ -12,7 +12,9 @@ import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
+import sgarciah01.principal.Juego;
 import sgarciah01.principal.PanelJuego;
+import sgarciah01.principal.Personaje;
 
 public class PantallaJuego implements Pantalla {
 
@@ -36,6 +38,10 @@ public class PantallaJuego implements Pantalla {
 		
 	/** PANEL JUEGO **/
 	private PanelJuego panelJuego;
+	
+	/** CONTROL DEL JUEGO **/
+	private Juego juego;
+	private Personaje personaje;
 
 	/** FUENTE **/
 	final Font fuenteSuperior = new Font("", Font.BOLD, 30);
@@ -47,11 +53,20 @@ public class PantallaJuego implements Pantalla {
 	private DecimalFormat formato = new DecimalFormat("#.##");
 	final Font fuenteTiempo = new Font("", Font.BOLD, 30);
 	
-	/** VARIABLES DEL VALOR DE LOS DATOS DEL PERSONALE **/
+	/** VARIABLES DEL VALOR DE LOS DATOS DEL PERSONAJE **/
 	private int vida;
 	private int ataque;
 	private int defensa;
 	private int dinero;
+	
+	/** VARIABLES DEL VALOR DEL PRECIO DE LAS MEJORAS **/
+	private int precioMejoraVida;
+	private int precioMejoraAtaque;
+	private int precioMejoraDefensa;
+	private int precioMejoraCritico;
+	private int precioMejoraMonedas;
+	private int precioPocion;
+	
 	
 	
 	/**
@@ -66,6 +81,8 @@ public class PantallaJuego implements Pantalla {
 	@Override
 	public void inicializarPantalla(PanelJuego panelJuego) {
 		this.panelJuego = panelJuego;
+		this.juego = new Juego();
+		this.personaje = juego.getPersonaje();
 		
 		// Imágenes
 		obtencionYReescaladoImagenes(panelJuego);
@@ -142,14 +159,16 @@ public class PantallaJuego implements Pantalla {
 		g.fillRect(250, 0, 500, 80);
 		g.drawImage(iconoAtaque, 270, 20, null);
 		g.drawImage(iconoDefensa, 445, 20, null);
-		g.drawImage(iconoVida, 600, 20, null);
+		g.drawImage(iconoVida, 580, 20, null);
 		
 		g.setColor(new Color(218, 239, 159));	// Color letra
 		
+		// ESTADÍSTICAS DEL PERSONAJE //
 		g.setFont(fuenteSuperior);
-		g.drawString(String.valueOf(ataque), 330, 50);
-		g.drawString(String.valueOf(defensa), 505, 50);
-		g.drawString(String.valueOf(vida), 660, 50);
+		g.drawString(String.valueOf(personaje.getAtaque()), 330, 50);
+		g.drawString(String.valueOf(personaje.getDefensa()), 505, 50);
+		g.drawString(String.valueOf(personaje.getVidaActual()) + " / " + 
+					String.valueOf(personaje.getVidaMaxima()), 640, 50);
 		
 		// Zona del dinero
 		g.setColor(new Color(147, 158, 117, 200));	// Fondo verde transparente
@@ -158,7 +177,7 @@ public class PantallaJuego implements Pantalla {
 		g.setFont(fuenteDinero);
 		g.setColor(Color.WHITE);
 		g.drawImage(iconoDinero, 280, 90, null);
-		g.drawString(String.valueOf(dinero), 310, 108);
+		g.drawString(String.valueOf(personaje.getMonedas()), 310, 108);
 		
 		// Icono personaje
 		g.drawImage(iconoPersonaje, 460, 350, null);
@@ -182,6 +201,14 @@ public class PantallaJuego implements Pantalla {
 		String [] textos = {"Mejorar Ataque", "Mejorar Defensa", "Mejorar Vida Máxima",
 				"Tomar una Poción", "Generación Monedas", 
 				"Índice Crítico"};
+		int [] valores = {
+				juego.getPrecioMejoraAtaque(),
+				juego.getPrecioMejoraDefensa(),
+				juego.getPrecioMejoraVida(),
+				juego.getPrecioPocion(),
+				juego.getPrecioMejoraMonedas(),
+				juego.getPrecioMejoraCritico()
+		};
 		
 		g.setFont(fuenteDinero);
 		g.setColor(new Color(194, 255, 246));
@@ -190,20 +217,26 @@ public class PantallaJuego implements Pantalla {
 		for (int i=0; i<3; i++) {
 			posYCelda = i * altoCelda;
 			posYItem = posYCelda + (altoCelda/2) - 15;
-			g.drawImage(iconoMas, 15, posYItem, null);
-			g.drawString(textos[i], 50, posYItem+22);			
+			g.drawImage(iconoMas, 15, posYItem-10, null);	// Icono del botón
+			g.drawString(textos[i], 50, posYItem+12);		// Texto del botón
+			g.drawImage(iconoDinero, 150, posYItem + 35, null);	// Moneda
+			g.drawString(String.valueOf(valores[i]), 180, posYItem + 55);
 		}
 						
 		posYCelda = 3 * altoCelda;
 		posYItem = posYCelda + (altoCelda/2) - 15;
-		g.drawImage(iconoPocion, 15, posYItem, null);
-		g.drawString(textos[3], 50, posYItem+22);
-		
+		g.drawImage(iconoPocion, 15, posYItem-10, null);	// Icono del botón
+		g.drawString(textos[3], 50, posYItem+12);			// Texto del botón
+		g.drawImage(iconoDinero, 150, posYItem + 35, null);	// Moneda
+		g.drawString(String.valueOf(valores[3]), 180, posYItem + 55);
+			
 		for (int i=4; i<6; i++) {
 			posYCelda = i * altoCelda;
 			posYItem = posYCelda + (altoCelda/2) - 15;
-			g.drawImage(iconoMas, 15, posYItem, null);
-			g.drawString(textos[i], 50, posYItem+22);			
+			g.drawImage(iconoMas, 15, posYItem-10, null);	// Icono del botón
+			g.drawString(textos[i], 50, posYItem+12);		// Texto del botón
+			g.drawImage(iconoDinero, 150, posYItem + 35, null);	// Moneda
+			g.drawString(String.valueOf(valores[i]), 180, posYItem + 55);
 		}
 
 		
@@ -224,7 +257,33 @@ public class PantallaJuego implements Pantalla {
 
 	@Override
 	public void pulsarRaton(MouseEvent e) {
-		// TODO Auto-generated method stub
+		int posX = e.getX();
+		int posY = e.getY();
+		int altoOpcion = panelJuego.getHeight() / OPCIONES;
+		int opcion = (posY / altoOpcion) + 1;
+				
+		if (posX <= 250) {	// Se ha pulsado en el panel de opciones de la izquierda
+			switch (opcion) {
+			case 1: 	// MEJORA ATAQUE
+				
+				break;
+			case 2: 	// MEJORA DEFENSA
+				
+				break;
+			case 3: 	// MEJORA VIDA MÁXIMA
+				
+				break;
+			case 4: 	// POCIÓN
+				
+				break;
+			case 5: 	// MEJORA GENERACIÓN MONEDAS
+				
+				break;
+			case 6: 	// MEJORA ÍNDICE CRÍTICO
+				
+				break;
+			}
+		}
 
 	}
 

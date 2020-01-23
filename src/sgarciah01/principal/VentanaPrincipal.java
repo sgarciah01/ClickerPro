@@ -65,6 +65,7 @@ public class VentanaPrincipal {
 	public void inicializarComponentes(){	
 		//Definimos el layout:
 		ventana.setLayout(new GridLayout(1,1));
+		ventana.setResizable(false);
 		
 		//PANEL JUEGO
 		panelJuego = new PanelJuego();
