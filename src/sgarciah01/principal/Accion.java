@@ -39,6 +39,9 @@ public class Accion {
 		case 6:
 			this.mensajeAccion = Juego.MSG_MEJORANDO + " " + Juego.MSG_INDICE_CRITICO;
 			break;
+		case 8:		// Viene un enemigo
+			this.mensajeAccion = "¡ ENEMIGO NUEVO !";
+			break;
 		}
 		
 		tiempoInicial = System.nanoTime();

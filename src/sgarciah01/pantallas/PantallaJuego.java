@@ -242,9 +242,27 @@ public class PantallaJuego implements Pantalla {
 			g.drawString(String.valueOf(valores[i]), 180, posYItem + 55);
 		}
 		
-		// Panel derecho
+		// PANEL DERECHO //
 		pintarMensajes(g);
 		
+		// PANEL INFERIOR PARA INFO DE ENEMIGOS //
+		g.setColor(new Color(255, 255, 255, 200));
+		g.fillRect(270, 480, 460, 60);
+		g.setColor(Color.BLACK);
+		g.drawRect(270, 480, 460, 60);
+		
+		if (juego.enemigoViniendo())
+			mostrarDatosEnemigo(g, juego.getEnemigo(), juego.getAccionEnemigo());
+		
+	}
+
+	private void mostrarDatosEnemigo(Graphics g, Personaje enemigo, 
+			Accion accionEnemigo) {
+		g.setColor(Color.BLACK);
+		g.setFont(fuenteDinero);
+		g.drawString("Enemigo a la vista. Atacará en " + 
+				accionEnemigo.tiempoQueQuedaString(), 290, 500);
+		g.drawString(enemigo.toString(), 310, 530);
 	}
 	
 	/**

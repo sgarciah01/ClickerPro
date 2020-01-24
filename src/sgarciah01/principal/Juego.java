@@ -20,8 +20,9 @@ public class Juego implements Runnable {
 	public static final int MEJORA_ATAQUE = 1;
 	public static final int MEJORA_DEFENSA = 2;
 	public static final int MEJORA_VIDA = 3;
-	public static final int MEJORA_CRITICO = 4;
+	public static final int MEJORA_CRITICO = 6;
 	public static final int MEJORA_DINERO = 5;
+	public static final int GENERAR_ENEMIGO = 8;
 
 	/** VARIABLES DEL VALOR DEL PRECIO DE LAS MEJORAS **/
 	private int precioMejoraVida;
@@ -46,6 +47,9 @@ public class Juego implements Runnable {
 	
 	/** ACCIONES REALIZÁNDOSE **/
 	private ArrayList<Accion> accionesRealizandose;
+	private boolean enemigoViniendo;
+	private Accion accionEnemigo;
+	private Personaje enemigo;
 	
 	/** PANTALLA DE JUEGO **/
 	private PantallaJuego pantallaJuego;
@@ -80,12 +84,14 @@ public class Juego implements Runnable {
 		// Iniciamos las acciones
 		accionesRealizandose = new ArrayList<Accion>();
 		vMejorando = new boolean [7];
+		enemigoViniendo = false;
 		
 		for (int i = 0; i < vMejorando.length; i++) 
 			vMejorando[i] = false;
 		
-		// Generamos el hilo
+		// Generamos el hilo y comenzamos el tiempo
 		new Thread(this).start();
+		tiempoInicial = System.nanoTime();
 	}
 
 	// ***** GETTERS Y SETTERS ***** //
@@ -200,6 +206,18 @@ public class Juego implements Runnable {
 	public void setPantallaJuego(PantallaJuego pantallaJuego) {
 		this.pantallaJuego = pantallaJuego;
 	}
+
+	public boolean enemigoViniendo () {
+		return enemigoViniendo;
+	}
+
+	public Personaje getEnemigo() {
+		return enemigo;
+	}
+	
+	public Accion getAccionEnemigo() {
+		return accionEnemigo;
+	}
 	// ***** GETTERS Y SETTERS ***** //
 	
 	
@@ -290,15 +308,6 @@ public class Juego implements Runnable {
 			vMejorando[MEJORA_CRITICO] = true;	// Indico que estoy mejorando
 			personaje.comprar(precioMejoraCritico);	// El personaje compra la mejora
 			
-			System.out.println("Añadir ACCION CRITICO");
-			
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			// Añado la acción a la lista de acciones
 			accionesRealizandose.add(new Accion(MEJORA_CRITICO, calcularDuracion(nivelMejoraCritico)));			
 		}
@@ -314,8 +323,8 @@ public class Juego implements Runnable {
 	}
 	
 	/**
-	 * Ejecuta la mejora indicada
-	 * @param tipo
+	 * Ejecuta la mejora indicada (ATAQUE, DEFENSA, VIDA, etc.)
+	 * @param tipo Tipo de mejora a realizar.
 	 */
 	public void ejecutarMejora(int tipo) {
 		switch (tipo) {
@@ -361,7 +370,8 @@ public class Juego implements Runnable {
 	}
 	
 	/**
-	 * Gestiona la lista de acciones que hay.
+	 * Gestiona la lista de acciones que hay. Las que se hayan realizado, las ejecuta 
+	 * y elimina de la lista.
 	 */
 	public void gestionarAcciones() {
 		Accion accion;
@@ -374,6 +384,66 @@ public class Juego implements Runnable {
 			}
 		}
 	}
+	
+	/**
+	 * Gestiona los datos del enemigo. Si ha llegado la hora, ataca.
+	 */
+	private void gestionarEnemigos() {
+		int tiempo = (int) ((System.nanoTime() - tiempoInicial)/1e9);
+		//System.out.println("TIEMPO: " + tiempo);
+		
+		// Si el enemigo está viniendo y ha llegado ya el fin de acción, COMBATE
+		if (enemigoViniendo) {
+			if (accionEnemigo.esFinDeAccion()) {			
+				combatir();
+				enemigoViniendo = false;
+			}			
+		} else if (tiempo % 10 == 0 && tiempo != 0) {
+			System.out.println("ENEMIGO GENERADO");
+			generarEnemigo();
+		}
+	}
+	
+	/**
+	 * Combate hasta el final entre el personaje y el enemigo.
+	 */
+	private void combatir() {
+		boolean finCombate = false;
+		
+		System.out.println("¡¡¡ COMBATE !!!");
+		
+		while (!finCombate) {
+			personaje.atacar(enemigo);
+			finCombate = !enemigo.estaVivo();
+			System.out.println("Personaje ataca. ");
+			System.out.println("ENEMIGO: " + enemigo.toString());
+			
+			if (!finCombate) {
+				enemigo.atacar(personaje);
+				finCombate = !personaje.estaVivo();
+				System.out.println("Enemigo ataca.");
+				System.out.println("PERSONAJE: " + personaje.toString());
+			}				
+		}
+	}
+	
+	/**
+	 * Genera el enemigo y su acción.
+	 */
+	private void generarEnemigo() {
+		int ataque, defensa, vida;
+		
+		accionEnemigo = new Accion(GENERAR_ENEMIGO, 15);
+		enemigoViniendo = true;
+		
+		ataque = (personaje.getAtaque() / 2);
+		defensa = (personaje.getDefensa() / 2);
+		vida = (personaje.getVidaMaxima() / 2);
+		
+		enemigo = new Personaje(vida, vida, ataque, defensa, 0);
+		
+	}
+	
 	
 	/**
 	 * Será el encargado de generar el dinero cada cierto tiempo
@@ -390,6 +460,8 @@ public class Juego implements Runnable {
 			// Generamos monedas en el personaje
 			personaje.generarMonedas(nivelMejoraMonedas);
 			gestionarAcciones();
+			gestionarEnemigos();
+			
 		}
 
 	}

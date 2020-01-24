@@ -139,14 +139,43 @@ public class Personaje {
 		this.monedas -= precio;
 	}
 	
+	/**
+	 * Resta el número de monedas del precio a las monedas del personaje.
+	 * @param precio
+	 */
 	public void comprar(int precio) {
 		this.monedas -= precio;
 	}
 	
+	/**
+	 * Recibe daño y se lo resta a la vida actual.
+	 * @param danno Daño a recibir.
+	 */
+	public void recibirDanno (int danno) {
+		this.vidaActual -= danno;
+	}
+	
+	/**
+	 * Ataca al enemigo.
+	 * @param enemigo
+	 */
+	public void atacar (Personaje enemigo) {
+		int danno = this.ataque + (int) (Math.random()-8) - enemigo.getDefensa();
+		enemigo.recibirDanno(danno);
+	}
+	
+	/**
+	 * Estará vivo si la vida actual es mayor que 0.
+	 * @return True si está vivo.
+	 */
+	public boolean estaVivo () {
+		return (this.vidaActual > 0);
+	}
+	
 	@Override
 	public String toString() {
-		return "Personaje ( HP=[ " + vidaActual + "/ " + vidaMaxima + " ], AT = " + ataque
-				+ ", DEF = " + defensa + ", CRÍTICO = " + indiceCritico + " )";
+		return "Personaje ( HP: [ " + vidaActual + "/ " + vidaMaxima + " ], AT: " + ataque
+				+ ", DEF: " + defensa + " )";
 	}
 	
 	
