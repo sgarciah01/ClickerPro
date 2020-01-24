@@ -93,32 +93,53 @@ public class Personaje {
 	}
 	
 	/**
-	 * Mejora en 2 puntos el ataque del personaje.
+	 * Mejora en 2 puntos el ataque del personaje y restaremos el 
+	 * pago a las monedas que tengamos.
 	 */
-	public void mejorarAtaque(int precio) {
+	public void mejorarAtaque() {
 		this.ataque += 2;
-		this.monedas -= precio;
 	}
 	
 	/**
-	 * Mejora en 2 puntos la defensa del personaje.
+	 * Mejora en 2 puntos la defensa del personaje y restaremos 
+	 * el pago a las monedas que tengamos.
 	 */
-	public void mejorarDefensa(int precio) {
+	public void mejorarDefensa() {
 		this.defensa += 1;
-		this.monedas -= precio;
 	}
 	
 	/**
-	 * Mejora en 2 puntos la vida máxima y actual del personaje.
+	 * Mejora en 2 puntos la vida máxima y actual del personaje y restaremos 
+	 * el pago a las monedas que tengamos.
 	 */
-	public void mejorarVidaMaxima (int precio) {
+	public void mejorarVidaMaxima () {
 		this.vidaMaxima += 2;
 		this.vidaActual += 2;
+	}
+	
+	/**
+	 * Mejora en 1 punto el índice de golpe crítico del personaje y restaremos 
+	 * el pago a las monedas que tengamos.
+	 */
+	public void mejorarIndiceCritico() {
+		this.indiceCritico++;
+	}
+	
+	/**
+	 * El personaje tomará una poción y restaremos el pago a las monedas que tengamos.
+	 * @param precio
+	 */
+	public void tomarPocion (int precio) {
+		/*
+		 *  Si al tomar la poción superamos la vida máxima, nuestra vida actual será la vida máxima.
+		 *  De no ser así, sumaremos a la vida actual la mitad de la vida máxima.
+		 */		
+		this.vidaActual = (vidaActual + (vidaMaxima/2) > vidaMaxima) ? 
+				vidaMaxima : vidaActual + (vidaMaxima/2); 
 		this.monedas -= precio;
 	}
 	
-	public void mejorarIndiceCritico(int precio) {
-		this.indiceCritico++;
+	public void comprar(int precio) {
 		this.monedas -= precio;
 	}
 	

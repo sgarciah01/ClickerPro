@@ -9,9 +9,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import sgarciah01.principal.Accion;
 import sgarciah01.principal.Juego;
 import sgarciah01.principal.PanelJuego;
 import sgarciah01.principal.Personaje;
@@ -46,6 +48,7 @@ public class PantallaJuego implements Pantalla {
 	/** FUENTE **/
 	final Font fuenteSuperior = new Font("", Font.BOLD, 30);
 	final Font fuenteDinero = new Font("", Font.PLAIN, 20);
+	final Font fuenteMensaje = new Font("", Font.PLAIN, 18);
 	final Font fuenteLateralIzquierda = new Font("", Font.PLAIN, 25);
 	
 	/** VARIABLES PARA TIEMPO **/
@@ -238,10 +241,31 @@ public class PantallaJuego implements Pantalla {
 			g.drawImage(iconoDinero, 150, posYItem + 35, null);	// Moneda
 			g.drawString(String.valueOf(valores[i]), 180, posYItem + 55);
 		}
-
 		
 		// Panel derecho
+		pintarMensajes(g);
 		
+	}
+	
+	/**
+	 * Pinta los mensajes de las acciones que están en curso.
+	 * @param g Gráficos
+	 */
+	public void pintarMensajes (Graphics g) {
+		List<Accion> listaAcciones = juego.getAccionesRealizandose();
+		int altoCelda = panelJuego.getHeight() / OPCIONES;
+		int posYCelda, posYMensaje;
+		
+		for (int i=0; i<listaAcciones.size(); i++) {
+			posYCelda = i * altoCelda;
+			posYMensaje = posYCelda + (altoCelda/2) - 15;
+			
+			g.setFont(fuenteMensaje);
+			g.drawString(listaAcciones.get(i).getMensajeAccion(), 770, posYMensaje);
+			
+			g.drawString("Tiempo restante: " + listaAcciones.get(i).tiempoQueQuedaString(), 
+					770, posYMensaje + 30);
+		}
 	}
 
 	@Override
@@ -251,8 +275,8 @@ public class PantallaJuego implements Pantalla {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 		iconoPersonaje = (iconoPersonaje == iconoSpiderman1) ? iconoSpiderman2 : iconoSpiderman1;
-
 	}
 
 	@Override

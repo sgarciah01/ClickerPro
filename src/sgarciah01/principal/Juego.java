@@ -9,12 +9,19 @@ public class Juego implements Runnable {
 	/** CONSTANTES **/
 	public static final int MAX_ACCIONES_EJECUTADAS = 6;
 
-	public static final String MSG_MEJORANDO = "Ejecutando Mejora:";
+	public static final String MSG_MEJORANDO = "Mejorando: ";
+	public static final String MSG_TIEMPO_RESTANTE = "Tiempo restante: ";
 	public static final String MSG_ATAQUE = "ATAQUE";
 	public static final String MSG_DEFENSA = "DEFENSA";
 	public static final String MSG_VIDA = "VIDA MÁXIMA";
-	public static final String MSG_INDICE_CRITICO = "ÍNDICE CRÍTICO";
-	public static final String MSG_DINERO = "GENERADOR MONEDAS";
+	public static final String MSG_INDICE_CRITICO = "CRÍTICO";
+	public static final String MSG_DINERO = "G.MONEDAS";
+	
+	public static final int MEJORA_ATAQUE = 1;
+	public static final int MEJORA_DEFENSA = 2;
+	public static final int MEJORA_VIDA = 3;
+	public static final int MEJORA_CRITICO = 4;
+	public static final int MEJORA_DINERO = 5;
 
 	/** VARIABLES DEL VALOR DEL PRECIO DE LAS MEJORAS **/
 	private int precioMejoraVida;
@@ -30,15 +37,21 @@ public class Juego implements Runnable {
 	private int nivelMejoraDefensa;
 	private int nivelMejoraCritico;
 	private int nivelMejoraMonedas;
+	
+	/** SIRVE PARA SABER SI SE ESTÁ MEJORANDO ALGO **/
+	private boolean [] vMejorando;
 
 	/** PERSONAJE **/
 	private Personaje personaje;
-
-	/** MENSAJES A MOSTRAR **/
-	private ArrayList<String> mensajesMostrar;
+	
+	/** ACCIONES REALIZÁNDOSE **/
+	private ArrayList<Accion> accionesRealizandose;
 	
 	/** PANTALLA DE JUEGO **/
 	private PantallaJuego pantallaJuego;
+	
+	/** TIEMPO INICIAL (Para generación de enemigos) **/
+	private double tiempoInicial;	
 
 	/**
 	 * Constructor por defecto
@@ -47,6 +60,7 @@ public class Juego implements Runnable {
 		// Creamos el personaje
 		personaje = new Personaje(30, 30, 15, 5, 0);
 		this.pantallaJuego = pantallaJuego;
+		
 		
 		// El precio inicial de las mejoras será 10
 		precioMejoraAtaque = 10;
@@ -63,6 +77,13 @@ public class Juego implements Runnable {
 		nivelMejoraCritico = 1;
 		nivelMejoraMonedas = 1;
 
+		// Iniciamos las acciones
+		accionesRealizandose = new ArrayList<Accion>();
+		vMejorando = new boolean [7];
+		
+		for (int i = 0; i < vMejorando.length; i++) 
+			vMejorando[i] = false;
+		
 		// Generamos el hilo
 		new Thread(this).start();
 	}
@@ -164,15 +185,26 @@ public class Juego implements Runnable {
 		this.personaje = personaje;
 	}
 
-	public ArrayList<String> getMensajesMostrar() {
-		return mensajesMostrar;
+	public ArrayList<Accion> getAccionesRealizandose() {
+		return accionesRealizandose;
 	}
 
-	public void setMensajesMostrar(ArrayList<String> mensajesMostrar) {
-		this.mensajesMostrar = mensajesMostrar;
+	public void setAccionesRealizandose(ArrayList<Accion> accionesRealizandose) {
+		this.accionesRealizandose = accionesRealizandose;
+	}
+
+	public PantallaJuego getPantallaJuego() {
+		return pantallaJuego;
+	}
+
+	public void setPantallaJuego(PantallaJuego pantallaJuego) {
+		this.pantallaJuego = pantallaJuego;
 	}
 	// ***** GETTERS Y SETTERS ***** //
 	
+	
+	
+
 	/**
 	 * El precio de la poción será 10 * la vida que recupere el personaje.
 	 * Recuperará la mitad de su vida máxima
@@ -191,10 +223,13 @@ public class Juego implements Runnable {
 	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
 	 */
 	public void mejorarAtaquePersonaje () {
-		if (personaje.getMonedas() >= precioMejoraAtaque) {
-			personaje.mejorarAtaque(precioMejoraAtaque);
-			nivelMejoraAtaque++;
-			precioMejoraAtaque = 10 * (int) Math.pow(2, nivelMejoraAtaque);			
+		if (personaje.getMonedas() >= precioMejoraAtaque && !vMejorando[MEJORA_ATAQUE]
+				&& accionesRealizandose.size() < MAX_ACCIONES_EJECUTADAS) {
+			vMejorando[MEJORA_ATAQUE] = true;		// Indico que estoy mejorando
+			personaje.comprar(precioMejoraAtaque);	// El personaje compra la mejora 
+			
+			// Añado la acción a la lista de acciones
+			accionesRealizandose.add(new Accion(MEJORA_ATAQUE, calcularDuracion(nivelMejoraAtaque)));
 		}		
 	}
 	
@@ -203,10 +238,13 @@ public class Juego implements Runnable {
 	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
 	 */
 	public void mejorarDefensaPersonaje () {
-		if (personaje.getMonedas() >= precioMejoraDefensa) {
-			personaje.mejorarDefensa(precioMejoraDefensa);
-			nivelMejoraDefensa++;
-			precioMejoraDefensa = 10 * (int) Math.pow(2, nivelMejoraDefensa);
+		if (personaje.getMonedas() >= precioMejoraDefensa && !vMejorando[MEJORA_DEFENSA]
+				&& accionesRealizandose.size() < MAX_ACCIONES_EJECUTADAS) {
+			vMejorando[MEJORA_DEFENSA] = true;	// Indico que estoy mejorando
+			personaje.comprar(precioMejoraDefensa);	// El personaje compra la mejora
+			
+			// Añado la acción a la lista de acciones
+			accionesRealizandose.add(new Accion(MEJORA_DEFENSA, calcularDuracion(nivelMejoraDefensa)));
 		}
 	}
 	
@@ -215,10 +253,15 @@ public class Juego implements Runnable {
 	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
 	 */
 	public void mejorarVidaMaximaPersonaje () {
-		if (personaje.getMonedas() >= precioMejoraVida) {
-			personaje.mejorarVidaMaxima(precioMejoraVida);
-			nivelMejoraVida++;
-			precioMejoraVida = 10 * (int) Math.pow(2, nivelMejoraVida);
+		if (personaje.getMonedas() >= precioMejoraVida && !vMejorando[MEJORA_VIDA]
+				&& accionesRealizandose.size() < MAX_ACCIONES_EJECUTADAS) {
+			vMejorando[MEJORA_VIDA] = true;	// Indico que estoy mejorando
+			personaje.comprar(precioMejoraVida);	// El personaje compra la mejora
+			
+			// Añado la acción a la lista de acciones
+			accionesRealizandose.add(new Accion(MEJORA_VIDA, 10));	// CAMBIAR DURACIÓN
+			
+			
 		}		
 	}
 	
@@ -227,9 +270,13 @@ public class Juego implements Runnable {
 	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
 	 */
 	public void mejorarGeneradorMonedas () {
-		if (personaje.getMonedas() >= precioMejoraMonedas) {
-			nivelMejoraMonedas++;
-			precioMejoraMonedas = 150 * (int) Math.pow(2, nivelMejoraAtaque);
+		if (personaje.getMonedas() >= precioMejoraMonedas && !vMejorando[MEJORA_DINERO]
+				&& accionesRealizandose.size() < MAX_ACCIONES_EJECUTADAS) {
+			vMejorando[MEJORA_DINERO] = true;	// Indico que estoy mejorando
+			personaje.comprar(precioMejoraMonedas);	// El personaje compra la mejora
+			
+			// Añado la acción a la lista de acciones
+			accionesRealizandose.add(new Accion(MEJORA_DINERO, calcularDuracion(nivelMejoraMonedas)));
 		}
 	}
 	
@@ -238,9 +285,93 @@ public class Juego implements Runnable {
 	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
 	 */
 	public void mejorarIndiceCritico () {
-		if (personaje.getMonedas() >= precioMejoraCritico) {
+		if (personaje.getMonedas() >= precioMejoraCritico && !vMejorando[MEJORA_CRITICO]
+				&& accionesRealizandose.size() < MAX_ACCIONES_EJECUTADAS) {
+			vMejorando[MEJORA_CRITICO] = true;	// Indico que estoy mejorando
+			personaje.comprar(precioMejoraCritico);	// El personaje compra la mejora
+			
+			System.out.println("Añadir ACCION CRITICO");
+			
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			// Añado la acción a la lista de acciones
+			accionesRealizandose.add(new Accion(MEJORA_CRITICO, calcularDuracion(nivelMejoraCritico)));			
+		}
+	}
+	
+	/**
+	 * En función al nivel, calcula la duración que tiene la mejora.
+	 * @param nivel
+	 * @return Duración de la mejora
+	 */
+	public int calcularDuracion(int nivel) {
+		return (int) (10 + Math.pow(2, nivel - 1));
+	}
+	
+	/**
+	 * Ejecuta la mejora indicada
+	 * @param tipo
+	 */
+	public void ejecutarMejora(int tipo) {
+		switch (tipo) {
+		case MEJORA_ATAQUE:
+			
+			personaje.mejorarAtaque();
+			nivelMejoraAtaque++;
+			precioMejoraAtaque = 10 * (int) Math.pow(2, nivelMejoraAtaque-1);	
+			vMejorando[MEJORA_ATAQUE] = false;		
+			
+			break;
+		case MEJORA_DEFENSA:
+			
+			personaje.mejorarDefensa();
+			nivelMejoraDefensa++;
+			precioMejoraDefensa = 10 * (int) Math.pow(2, nivelMejoraDefensa-1);
+			vMejorando[MEJORA_DEFENSA] = false;
+			
+			break;
+		case MEJORA_VIDA:
+			
+			personaje.mejorarVidaMaxima();
+			nivelMejoraVida++;
+			precioMejoraVida = 10 * (int) Math.pow(2, nivelMejoraVida-1);
+			vMejorando[MEJORA_VIDA] = false;
+			
+			break;
+		case MEJORA_DINERO:
+			
+			nivelMejoraMonedas++;
+			precioMejoraMonedas = 150 * (int) Math.pow(2, nivelMejoraMonedas-1);
+			vMejorando[MEJORA_DINERO] = false;	
+			
+			break;
+		case MEJORA_CRITICO:
+			
 			nivelMejoraCritico++;
-			precioMejoraCritico = 10 * (int) Math.pow(2, nivelMejoraCritico);
+			precioMejoraCritico = 10 * (int) Math.pow(2, nivelMejoraCritico-1);
+			vMejorando[MEJORA_CRITICO] = false;
+			
+			break;
+		}
+	}
+	
+	/**
+	 * Gestiona la lista de acciones que hay.
+	 */
+	public void gestionarAcciones() {
+		Accion accion;
+		for (int i = 0; i < accionesRealizandose.size(); i++) {
+			accion = accionesRealizandose.get(i);
+			
+			if (accion.esFinDeAccion()) {
+				ejecutarMejora(accion.getTipoAccion());
+				accionesRealizandose.remove(accion);
+			}
 		}
 	}
 	
@@ -258,6 +389,7 @@ public class Juego implements Runnable {
 
 			// Generamos monedas en el personaje
 			personaje.generarMonedas(nivelMejoraMonedas);
+			gestionarAcciones();
 		}
 
 	}
