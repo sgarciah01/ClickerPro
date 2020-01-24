@@ -81,7 +81,7 @@ public class PantallaJuego implements Pantalla {
 	@Override
 	public void inicializarPantalla(PanelJuego panelJuego) {
 		this.panelJuego = panelJuego;
-		this.juego = new Juego();
+		this.juego = new Juego(this);
 		this.personaje = juego.getPersonaje();
 		
 		// Imágenes
@@ -277,10 +277,10 @@ public class PantallaJuego implements Pantalla {
 				
 				break;
 			case 5: 	// MEJORA GENERACIÓN MONEDAS
-				
+				juego.mejorarGeneradorMonedas();
 				break;
 			case 6: 	// MEJORA ÍNDICE CRÍTICO
-				
+				juego.mejorarIndiceCritico();
 				break;
 			}
 		}

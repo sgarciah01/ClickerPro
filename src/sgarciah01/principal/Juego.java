@@ -2,6 +2,8 @@ package sgarciah01.principal;
 
 import java.util.ArrayList;
 
+import sgarciah01.pantallas.PantallaJuego;
+
 public class Juego implements Runnable {
 
 	/** CONSTANTES **/
@@ -32,16 +34,20 @@ public class Juego implements Runnable {
 	/** PERSONAJE **/
 	private Personaje personaje;
 
-	/** Mensajes a mostrar **/
+	/** MENSAJES A MOSTRAR **/
 	private ArrayList<String> mensajesMostrar;
+	
+	/** PANTALLA DE JUEGO **/
+	private PantallaJuego pantallaJuego;
 
 	/**
 	 * Constructor por defecto
 	 */
-	public Juego() {
+	public Juego(PantallaJuego pantallaJuego) {
 		// Creamos el personaje
 		personaje = new Personaje(30, 30, 15, 5, 0);
-
+		this.pantallaJuego = pantallaJuego;
+		
 		// El precio inicial de las mejoras será 10
 		precioMejoraAtaque = 10;
 		precioMejoraDefensa = 10;
@@ -180,24 +186,63 @@ public class Juego implements Runnable {
 	// *********************************************************************** //
 	// *************** 			MEJORAS DEL PERSONAJE 			************** //
 	// *********************************************************************** //
+	/**
+	 * Si el personaje tiene monedas suficientes, mejora el ataque del personaje.
+	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
+	 */
 	public void mejorarAtaquePersonaje () {
-		personaje.mejorarAtaque(precioMejoraAtaque);
-		nivelMejoraAtaque++;
-		precioMejoraAtaque = 10 * precioMejoraAtaque;
+		if (personaje.getMonedas() >= precioMejoraAtaque) {
+			personaje.mejorarAtaque(precioMejoraAtaque);
+			nivelMejoraAtaque++;
+			precioMejoraAtaque = 10 * (int) Math.pow(2, nivelMejoraAtaque);			
+		}		
 	}
 	
+	/**
+	 * Si el personaje tiene monedas suficientes, mejora la defensa del personaje.
+	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
+	 */
 	public void mejorarDefensaPersonaje () {
-		personaje.mejorarDefensa(precioMejoraDefensa);
-		nivelMejoraDefensa++;
-		precioMejoraDefensa= 10 * precioMejoraDefensa;
+		if (personaje.getMonedas() >= precioMejoraDefensa) {
+			personaje.mejorarDefensa(precioMejoraDefensa);
+			nivelMejoraDefensa++;
+			precioMejoraDefensa = 10 * (int) Math.pow(2, nivelMejoraDefensa);
+		}
 	}
 	
+	/**
+	 * Si el personaje tiene monedas suficientes, mejora la vida máxima del personaje.
+	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
+	 */
 	public void mejorarVidaMaximaPersonaje () {
-		personaje.mejorarVidaMaxima(precioMejoraVida);
-		nivelMejoraVida++;
-		precioMejoraVida= 10 * precioMejoraVida;
+		if (personaje.getMonedas() >= precioMejoraVida) {
+			personaje.mejorarVidaMaxima(precioMejoraVida);
+			nivelMejoraVida++;
+			precioMejoraVida = 10 * (int) Math.pow(2, nivelMejoraVida);
+		}		
 	}
 	
+	/**
+	 * Si el personaje tiene monedas suficientes, mejora el generador de monedas del personaje.
+	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
+	 */
+	public void mejorarGeneradorMonedas () {
+		if (personaje.getMonedas() >= precioMejoraMonedas) {
+			nivelMejoraMonedas++;
+			precioMejoraMonedas = 150 * (int) Math.pow(2, nivelMejoraAtaque);
+		}
+	}
+	
+	/**
+	 * Si el personaje tiene monedas suficientes, mejora el índice de golpes críticos del personaje.
+	 * A su vez, aumenta en 1 el nivel de mejora y aumenta el precio de mejora.
+	 */
+	public void mejorarIndiceCritico () {
+		if (personaje.getMonedas() >= precioMejoraCritico) {
+			nivelMejoraCritico++;
+			precioMejoraCritico = 10 * (int) Math.pow(2, nivelMejoraCritico);
+		}
+	}
 	
 	/**
 	 * Será el encargado de generar el dinero cada cierto tiempo
