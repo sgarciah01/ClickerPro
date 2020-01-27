@@ -122,7 +122,7 @@ public class Personaje {
 	 * el pago a las monedas que tengamos.
 	 */
 	public void mejorarIndiceCritico() {
-		this.indiceCritico++;
+		this.indiceCritico += 5;
 	}
 	
 	/**
@@ -160,8 +160,24 @@ public class Personaje {
 	 * @param enemigo
 	 */
 	public void atacar (Personaje enemigo) {
-		int danno = this.ataque + (int) (Math.random()-8) - enemigo.getDefensa();
-		enemigo.recibirDanno(danno);
+		int rangoAtaque = (int) (Math.random()*5 - 2);
+		int rangoDefensa = (int) (Math.random()*3 - 1);
+		
+		// ATAQUEp (+-2) - DEFENSAe (+-1)
+		int danio = (this.ataque + rangoAtaque) - (enemigo.getDefensa() + rangoDefensa);
+		danio = Math.max(0, danio);	// No puede ser negativo
+		
+		int critico = (int) (Math.random() * 100);
+		
+		if (this.indiceCritico >= critico) {
+			danio *= 2;
+			System.out.println("DAÑO CRÍTICO: " + danio);
+		} else 
+			System.out.println("Daño: " + danio);
+			
+		
+		
+		enemigo.recibirDanno(danio);
 	}
 	
 	/**

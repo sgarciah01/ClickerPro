@@ -230,7 +230,7 @@ public class Juego implements Runnable {
 	 * @return (10 * VIDA MÁXIMA PERSONAJE / 2)
 	 */
 	private int calcularPrecioPocion() {
-		return 10 * (personaje.getVidaMaxima() / 2);
+		return 150 + (10 * nivelMejoraVida);
 	}
 
 	// *********************************************************************** //
@@ -277,7 +277,7 @@ public class Juego implements Runnable {
 			personaje.comprar(precioMejoraVida);	// El personaje compra la mejora
 			
 			// Añado la acción a la lista de acciones
-			accionesRealizandose.add(new Accion(MEJORA_VIDA, 10));	// CAMBIAR DURACIÓN
+			accionesRealizandose.add(new Accion(MEJORA_VIDA, calcularDuracion(nivelMejoraVida)));
 			
 			
 		}		
@@ -311,6 +311,26 @@ public class Juego implements Runnable {
 			// Añado la acción a la lista de acciones
 			accionesRealizandose.add(new Accion(MEJORA_CRITICO, calcularDuracion(nivelMejoraCritico)));			
 		}
+	}
+	
+	/**
+	 * El personaje toma una poción.
+	 */
+	public void tomarPocion() {
+		int rest;
+		
+		if (personaje.getMonedas() >= precioPocion && 
+				personaje.getVidaActual() < personaje.getVidaMaxima()) {
+			rest = personaje.getVidaMaxima() / 2;
+			personaje.tomarPocion(precioPocion);
+		}
+	}
+	
+	/**
+	 * Aumenta en 25 el precio de una poción.
+	 */
+	public void actualizarPrecioPocion() {
+		this.precioPocion += 20;
 	}
 	
 	/**
@@ -350,6 +370,7 @@ public class Juego implements Runnable {
 			nivelMejoraVida++;
 			precioMejoraVida = 10 * (int) Math.pow(2, nivelMejoraVida-1);
 			vMejorando[MEJORA_VIDA] = false;
+			actualizarPrecioPocion();
 			
 			break;
 		case MEJORA_DINERO:
@@ -361,6 +382,7 @@ public class Juego implements Runnable {
 			break;
 		case MEJORA_CRITICO:
 			
+			personaje.mejorarIndiceCritico();
 			nivelMejoraCritico++;
 			precioMejoraCritico = 10 * (int) Math.pow(2, nivelMejoraCritico-1);
 			vMejorando[MEJORA_CRITICO] = false;
@@ -398,7 +420,7 @@ public class Juego implements Runnable {
 				combatir();
 				enemigoViniendo = false;
 			}			
-		} else if (tiempo % 10 == 0 && tiempo != 0) {
+		} else if (tiempo % 30 == 0 && tiempo != 0) {
 			System.out.println("ENEMIGO GENERADO");
 			generarEnemigo();
 		}
@@ -425,23 +447,32 @@ public class Juego implements Runnable {
 				System.out.println("PERSONAJE: " + personaje.toString());
 			}				
 		}
+		
+		// Si el personaje ha muerto, cambiamos a pantalla final
+		if (!personaje.estaVivo()) {
+			pantallaJuego.cambiarAPantallaFin();
+		}
 	}
 	
 	/**
 	 * Genera el enemigo y su acción.
 	 */
 	private void generarEnemigo() {
-		int ataque, defensa, vida;
+		int ataque, defensa, vida, rango;
 		
-		accionEnemigo = new Accion(GENERAR_ENEMIGO, 15);
+		accionEnemigo = new Accion(GENERAR_ENEMIGO, 25);
 		enemigoViniendo = true;
 		
-		ataque = (personaje.getAtaque() / 2);
-		defensa = (personaje.getDefensa() / 2);
-		vida = (personaje.getVidaMaxima() / 2);
+		rango = (int) (Math.random()*7 - 3);
+		vida = 15 + (2 * nivelMejoraVida) + rango;
 		
-		enemigo = new Personaje(vida, vida, ataque, defensa, 0);
+		rango = (int) (Math.random()*5 - 2);		
+		ataque = 7 + (2 * nivelMejoraAtaque) + rango;
 		
+		rango = (int) (Math.random()*5 - 2);
+		defensa = 2 + (2*nivelMejoraDefensa) + rango;
+		
+		enemigo = new Personaje(vida, vida, ataque, defensa, 0);		
 	}
 	
 	
