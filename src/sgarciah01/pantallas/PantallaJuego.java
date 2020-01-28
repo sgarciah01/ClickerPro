@@ -22,6 +22,9 @@ public class PantallaJuego implements Pantalla {
 
 	// ***** CONSTANTES ***** //
 	public final static int OPCIONES = 6;
+	public final static int POSY_ENEMIGO = 300;
+	public final static int POSX_ENEMIGO1 = 300;
+	public final static int POSX_ENEMIGO2 = 600;	
 
 	/** FONDO, IMÁGENES **/
 	private BufferedImage fondo;
@@ -47,6 +50,12 @@ public class PantallaJuego implements Pantalla {
 	
 	private Image [] iconosEnemigos;
 	
+	/** VARIABLES PARA GENERAR ENEMIGOS **/
+	private boolean generadoEnemigo;
+	private int posXEnemigo;  
+	private int enemigoRand;
+	private int posXe;
+	
 	/** PANEL JUEGO **/
 	private PanelJuego panelJuego;
 	
@@ -67,13 +76,24 @@ public class PantallaJuego implements Pantalla {
 	 * @param panelJuego Panel del juego
 	 */
 	public PantallaJuego(PanelJuego panelJuego) {
+		this.juego = new Juego(this);
 		inicializarPantalla(panelJuego);
 	}
-
+	
+	/**
+	 * Constructor por defecto
+	 * 
+	 * @param panelJuego Panel del juego
+	 */
+	public PantallaJuego(PanelJuego panelJuego, Juego juego) {
+		this.juego = juego;
+		inicializarPantalla(panelJuego);
+	}
+	
+	
 	@Override
 	public void inicializarPantalla(PanelJuego panelJuego) {
 		this.panelJuego = panelJuego;
-		this.juego = new Juego(this);
 		this.personaje = juego.getPersonaje();
 		
 		// Imágenes
@@ -86,6 +106,8 @@ public class PantallaJuego implements Pantalla {
 		iconosEnemigos[2] = iconoGoku;
 		iconosEnemigos[3] = iconoMilitar;
 		iconosEnemigos[4] = iconoPikachu;
+		
+		generadoEnemigo = false;
 	}
 
 	/**
@@ -141,15 +163,15 @@ public class PantallaJuego implements Pantalla {
 				iconoCritico.getHeight(null), 25), 25, Image.SCALE_SMOOTH);
 		
 		iconoEsqueleto = iconoEsqueleto.getScaledInstance(getAnchoEscalado(iconoEsqueleto.getWidth(null), 
-				iconoEsqueleto.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
+				iconoEsqueleto.getHeight(null), 130), 130, Image.SCALE_SMOOTH);
 		iconoGoku = iconoGoku.getScaledInstance(getAnchoEscalado(iconoGoku.getWidth(null), 
-				iconoGoku.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
+				iconoGoku.getHeight(null), 130), 130, Image.SCALE_SMOOTH);
 		iconoGuerrero = iconoGuerrero.getScaledInstance(getAnchoEscalado(iconoGuerrero.getWidth(null), 
-				iconoGuerrero.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
+				iconoGuerrero.getHeight(null), 130), 130, Image.SCALE_SMOOTH);
 		iconoMilitar = iconoMilitar.getScaledInstance(getAnchoEscalado(iconoMilitar.getWidth(null), 
-				iconoMilitar.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
+				iconoMilitar.getHeight(null), 130), 130, Image.SCALE_SMOOTH);
 		iconoPikachu = iconoPikachu.getScaledInstance(getAnchoEscalado(iconoPikachu.getWidth(null), 
-				iconoPikachu.getHeight(null), 80), 80, Image.SCALE_SMOOTH);
+				iconoPikachu.getHeight(null), 130), 130, Image.SCALE_SMOOTH);
 				
 		iconoPersonaje = iconoDeadpool1;
 	}
@@ -273,8 +295,19 @@ public class PantallaJuego implements Pantalla {
 		g.setColor(Color.BLACK);
 		g.drawRect(270, 480, 460, 60);
 		
-		if (juego.enemigoViniendo())
+		
+		if (juego.enemigoViniendo() && !generadoEnemigo) {
+			enemigoRand = (int) (Math.random() * iconosEnemigos.length);
+			posXe = (int) (Math.random() * 2);
+			
+			// Configuramos si aparece a la izquierda o a la derecha
+			posXEnemigo = posXe == 0 ? POSX_ENEMIGO1 : POSX_ENEMIGO2;
+			generadoEnemigo = true;
+		}
+		
+		if (generadoEnemigo) {
 			mostrarDatosEnemigo(g, juego.getEnemigo(), juego.getAccionEnemigo());
+		}
 		
 	}
 
@@ -291,6 +324,9 @@ public class PantallaJuego implements Pantalla {
 		g.drawString("Enemigo a la vista. Atacará en " + 
 				accionEnemigo.tiempoQueQuedaString(), 290, 500);
 		g.drawString(enemigo.toString(), 310, 530);
+		
+		// Mostramos la figura
+		g.drawImage(iconosEnemigos[enemigoRand], posXEnemigo, POSY_ENEMIGO, null);
 	}
 	
 	/**
@@ -322,8 +358,10 @@ public class PantallaJuego implements Pantalla {
 			e.printStackTrace();
 		}
 		
-		iconoPersonaje = (iconoPersonaje == iconoDeadpool1) ? iconoDeadpool2 : iconoDeadpool1;
 		
+		iconoPersonaje = (iconoPersonaje == iconoDeadpool1) ? iconoDeadpool2 : iconoDeadpool1;
+		if (!juego.enemigoViniendo() && generadoEnemigo)
+			generadoEnemigo = false;
 	}
 
 	@Override
@@ -369,11 +407,8 @@ public class PantallaJuego implements Pantalla {
 		// TODO Auto-generated method stub
 
 	}
-
-	/**
-	 * Muestra la pantalla del final del juego
-	 */
-	public void cambiarAPantallaFin () {
+	
+	public void cambiarAPantallaFin() {
 		this.panelJuego.setPantallaActual(new PantallaFin(panelJuego));
 	}
 }
