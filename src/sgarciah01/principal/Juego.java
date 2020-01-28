@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import sgarciah01.pantallas.PantallaJuego;
 
+/**
+ * Ejecuta el hilo principal del juego.
+ * 
+ * @author Sergio García Hernández
+ */
 public class Juego implements Runnable {
 
 	/** CONSTANTES **/
@@ -432,8 +437,6 @@ public class Juego implements Runnable {
 	private void combatir() {
 		boolean finCombate = false;
 		
-		System.out.println("¡¡¡ COMBATE !!!");
-		
 		while (!finCombate) {
 			personaje.atacar(enemigo);
 			finCombate = !enemigo.estaVivo();
@@ -451,7 +454,7 @@ public class Juego implements Runnable {
 		// Si el personaje ha muerto, cambiamos a pantalla final
 		if (!personaje.estaVivo()) {
 			pantallaJuego.cambiarAPantallaFin();
-		}
+		} 
 	}
 	
 	/**

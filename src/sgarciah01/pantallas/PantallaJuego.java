@@ -18,6 +18,11 @@ import sgarciah01.principal.Juego;
 import sgarciah01.principal.PanelJuego;
 import sgarciah01.principal.Personaje;
 
+/**
+ * Pantalla del Juego
+ * 
+ * @author Sergio García Hernández
+ */
 public class PantallaJuego implements Pantalla {
 
 	// ***** CONSTANTES ***** //
@@ -246,8 +251,7 @@ public class PantallaJuego implements Pantalla {
 		// Panel izquierdo
 		int posYItem;
 		String [] textos = {"Mejorar Ataque", "Mejorar Defensa", "Mejorar Vida Máxima",
-				"Tomar una Poción", "Generación Monedas", 
-				"Índice Crítico"};
+				"Tomar una Poción", "Generación Monedas", "Índice Crítico"};
 		int [] valores = {
 				juego.getPrecioMejoraAtaque(),
 				juego.getPrecioMejoraDefensa(),
@@ -408,6 +412,9 @@ public class PantallaJuego implements Pantalla {
 
 	}
 	
+	/**
+	 * Cambia a la pantalla de final del juego, una vez muere el personaje.
+	 */
 	public void cambiarAPantallaFin() {
 		this.panelJuego.setPantallaActual(new PantallaFin(panelJuego));
 	}

@@ -12,6 +12,11 @@ import javax.imageio.ImageIO;
 
 import sgarciah01.principal.PanelJuego;
 
+/**
+ * Pantalla de final del juego.
+ * 
+ * @author Sergio García Hernández
+ */
 public class PantallaFin implements Pantalla {
 	
 	/** PANEL JUEGO **/

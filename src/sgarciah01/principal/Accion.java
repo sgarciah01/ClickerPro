@@ -2,6 +2,12 @@ package sgarciah01.principal;
 
 import java.text.DecimalFormat;
 
+
+/**
+ * Almacena los datos de una acción que se realiza en el juego.
+ * 
+ * @author Sergio García Hernández
+ */
 public class Accion {
 
 	private String mensajeAccion;

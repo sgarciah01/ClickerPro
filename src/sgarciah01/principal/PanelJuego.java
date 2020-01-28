@@ -24,6 +24,11 @@ import sgarciah01.pantallas.Pantalla;
 import sgarciah01.pantallas.PantallaInicio;
 
 
+/**
+ * Panel del juego. Extiende de JPanel
+ * 
+ * @author Sergio García Hernández
+ */
 public class PanelJuego extends JPanel implements Runnable{
 		
 	
@@ -41,7 +46,7 @@ public class PanelJuego extends JPanel implements Runnable{
 		
 		new Thread(this).start();
 		
-		//L�?STENERS
+		//L�?STENERS
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {

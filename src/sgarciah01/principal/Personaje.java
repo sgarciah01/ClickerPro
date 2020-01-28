@@ -1,5 +1,10 @@
 package sgarciah01.principal;
 
+/**
+ * Almacena las características de un personaje.
+ * 
+ * @author Sergio García Hernández
+ */
 public class Personaje {
 
 	/** ELEMENTOS DEL PERSONAJE **/

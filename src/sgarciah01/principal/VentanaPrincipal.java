@@ -44,8 +44,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * VentanaPrincipal sirve como contenedor para el panel de juego.
+ * 
  * @author jesusredondogarcia
- *
  */
 public class VentanaPrincipal {
 
