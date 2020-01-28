@@ -470,7 +470,7 @@ public class Juego implements Runnable {
 		ataque = 7 + (2 * nivelMejoraAtaque) + rango;
 		
 		rango = (int) (Math.random()*5 - 2);
-		defensa = 2 + (2*nivelMejoraDefensa) + rango;
+		defensa = (2 * nivelMejoraDefensa) + rango;
 		
 		enemigo = new Personaje(vida, vida, ataque, defensa, 0);		
 	}
